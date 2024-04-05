@@ -1,0 +1,149 @@
+# GraphQL schema example
+#
+# https://gqlgen.com/getting-started/
+
+input UserInput {
+    userID: ID!
+    userName: String!
+    userEmail: String!
+    userRole: UserRole!
+}
+
+input OspfConfigInput {
+  OspfRouterID: String
+  OspfRedistribution: Boolean
+  OspfNetwork: [String!]!
+  OspfArea: [String!]!
+}
+
+input BgpConfigInput {
+  BgpLocalAS: String
+  BgpRemoteAS: [String!]!
+  BgpNeighbourIP: [String!]!
+  BgpNetworkIP: [String!]!
+}
+
+input RouterConfigInput {
+  ospf: OspfConfigInput
+  bgp: BgpConfigInput
+}
+
+type Org {
+  OrgID: String!
+  OrgName: String!
+  OrgEmail: String!
+  OrgAddress: String!
+  OrgPhone: String!
+  OrgType: OrgType!
+  OrgUser: [User!]!
+  CreatedAt: String!
+  UpdatedAt: String!
+}
+
+type OspfConfig {
+  OspfRouterID: String
+  OspfRedistribution: Boolean
+  OspfNetwork: [String!]!
+  OspfArea: [String!]!
+}
+ 
+type BgpConfig {
+  BgpLocalAS: String
+  BgpRemoteAS: [String!]!
+  BgpNeighbourIP: [String!]!
+  BgpNetworkIP: [String!]!
+}
+ 
+type RouterConfig {
+  ospf: OspfConfig
+  bgp: BgpConfig
+}
+ 
+type Router {
+  id: ID!
+  name: String!
+  status: RouterStatus!
+  createdAt: String!
+  updatedAt: String!
+  deploymentType: String!
+}
+ 
+enum RouterStatus {
+  ACTIVE
+  INACTIVE
+  MAINTENANCE
+}
+ 
+enum OrgType {
+    SAASORG
+    CLIENT
+    RESELLER
+}
+
+type User {
+    userID: ID!
+    userName: String!
+    userEmail: String!
+    userRole: UserRole!
+}
+
+enum UserRole {
+    ADMIN
+    ENGINEER
+}
+
+type Query {
+  listRouters: [Router!]!
+  listOrgs: [Org!]!
+  listUsers: [User!]!
+}
+
+type Mutation {
+    createOrg(
+        OrgID: String!,
+        OrgName: String!,
+        OrgEmail: String!,
+        OrgAddress: String!,
+        OrgPhone: String!,
+        OrgType: OrgType!,
+        CreatedAt: String!,
+        UpdatedAt: String!
+    ): Org!
+    updateClientOrg(
+        OrgID: String!,
+        OrgName: String!,
+        OrgEmail: String!,
+        OrgAddress: String!,
+        OrgPhone: String!,
+        OrgType: OrgType!,
+        CreatedAt: String!,
+        UpdatedAt: String!
+    ): Org!
+    updateOwnOrg(
+        OrgID: String!,
+        OrgName: String!,
+        OrgEmail: String!,
+        OrgAddress: String!,
+        OrgPhone: String!,
+        OrgType: OrgType!,
+        CreatedAt: String!,
+        UpdatedAt: String!
+    ): Org!
+    viewOrg(
+        OrgID: ID!        
+    ): Org!
+    deleteOrg(OrgID: ID!): Org
+    viewOwnOrgUser(OrgID: ID!): [User!]!
+    viewClientOrgUser(OrgID: ID!): [User!]!
+    
+    # Updated mutations with UserInput as argument type
+    addOrgUser(OrgID: ID!, orgUser: UserInput!): User!
+    updateOrgUser(OrgID: ID!, orgUser: UserInput!): User!
+    deleteOrgUser(OrgID: ID!, orgUser: UserInput!): User!
+    UpdateOwnProfile(OrgID: ID!, orgUser: UserInput!): User!
+    
+    addRouter(name: String!, deploymentType: String!): Router!
+    deleteRouter(id: ID!): Router
+    updateRouterConfig(configInput: RouterConfigInput): RouterConfig
+}
+
